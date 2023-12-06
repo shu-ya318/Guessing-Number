@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <title>猜數字遊戲</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <h1>猜數字遊戲</h1>
+    <p>1 到 100 之間的數字，你猜是多少？</p>
+    <input type="text" id="guessField" />
+    <input type="submit" value="猜!" id="guessSubmit" />
+             <button id="revealAnswer">揭曉答案</button>
+             <p>猜的次數: <span id="attemptsCount">0</span></p>
+    <p class="message"></p>
+  </body>
+
+  <script>
+    // Random number 
+    const targetNumber = Math.floor(Math.random() * 100) + 1;
+    console.log("answer: " + targetNumber);
+
+    // Get element 
+    const  guessField = document.getElementById("guessField");
+    const guessSubmit = document.getElementById("guessSubmit");
+    const message = document.querySelector(".message");
+    const attemptsCount =document.getElementById("attemptsCount");
+    const revealAnswerBtn = document.getElementById("revealAnswer");
+
+    // Variables
+    let guessCount = 0;
+
+    // Event listener
+    guessSubmit .addEventListener("click", checkGuess);
+    revealAnswerBtn.addEventListener("click", revealAnswer);
+
+    // Guess function
+    function checkGuess() {
+      const userGuess = parseInt(guessField.value);
+      console .log("userGuess: " + userGuess);
+
+      guessCount++;
+
+
+      if (userGuess === targetNumber) {
+        message.textContent = `恭喜你，你猜對了！你這次猜了 ${guessCount} 次哦～`;
+        message.style.color = "green";
+        guessSubmit.disabled = true;
+
+      } else if (userGuess < targetNumber) {
+        message.textContent = "太小了，再試一次。";
+        message.style.color = "red";
+
+      } else {
+        message.textContent = "太大了，再試一次。";
+        message.style.color = "red";
+      }
+
+
+      attemptsCount.textContent = guessCount;
+      guessField.value = "";
+      guessField.focus();
+    }
+
+ // Check for failure condition
+ if (guessCount > 5  && userGuess !== targetNumber) {
+  message.textContent = `You Failed! 答案是 ${targetNumber}`;
+  message.style.color = "red";
+  guessSubmit.disabled = true;
+}
+
+guessField.value = " ";
+guessField.focus();
+
+
+    function revealAnswer(  )  {
+      message.textContent = `本次遊戲答案為: ${targetNumber}`;
+      message.style.color = "green";
+      revealAnswerBtn.disabled = true;
+       }
+
+  </script>
+</html>
