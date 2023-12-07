@@ -3,6 +3,9 @@
   <head>
     <title>猜數字遊戲</title>
     <meta charset="utf-8" />
+    <style>
+      /* Add your CSS styles here if needed */
+    </style>
   </head>
   <body>
     <h1>猜數字遊戲</h1>
@@ -10,65 +13,102 @@
     <input type="text" id="guessField" />
     <input type="submit" value="猜!" id="guessSubmit" />
     <button id="revealAnswer">揭曉答案</button>
+    <button id="playAgain">再玩一次</button>
     <p>猜的次數: <span id="attemptsCount">0</span></p>
     <p class="message"></p>
-  </body>
 
-  <script>
-    // Random number
-    const targetNumber = Math.floor(Math.random() * 100) + 1;
-    console.log("answer: " + targetNumber);
+    <script>
+      // Random number
+      let targetNumber = generateRandomNumber();
+      console.log("answer: " + targetNumber);
 
-    // Get element
-    const guessField = document.getElementById("guessField");
-    const guessSubmit = document.getElementById("guessSubmit");
-    const message = document.querySelector(".message");
-    const attemptsCount = document.getElementById("attemptsCount");
-    const revealAnswerBtn = document.getElementById("revealAnswer");
+      // Get element
+      const guessField = document.getElementById("guessField");
+      const guessSubmit = document.getElementById("guessSubmit");
+      const message = document.querySelector(".message");
+      const attemptsCount = document.getElementById("attemptsCount");
+      const revealAnswerBtn = document.getElementById("revealAnswer");
+      const playAgainBtn = document.getElementById("playAgain");
 
-    // Variables
-    let guessCount = 0;
-    const maxAttempts = 5;
+      // Variables
+      let guessCount = 0;
+      const maxAttempts = 5;
 
-    // Event listener
-    guessSubmit.addEventListener("click", checkGuess);
-    revealAnswerBtn.addEventListener("click", revealAnswer);
+      // Event listener
+      guessSubmit.addEventListener("click", checkGuess);
+      revealAnswerBtn.addEventListener("click", revealAnswer);
+      playAgainBtn.addEventListener("click", playAgain);
 
-    // Guess function
-    function checkGuess() {
-      const userGuess = parseInt(guessField.value);
-      console.log("userGuess: " + userGuess);
+      // Guess function
+      function checkGuess() {
+        const userGuess = parseInt(guessField.value);
+        console.log("userGuess: " + userGuess);
 
-      guessCount++;
+        guessCount++;
 
-      if (userGuess === targetNumber) {
-        message.textContent = `恭喜你，你猜對了！你這次猜了 ${guessCount} 次哦～`;
+        if (userGuess === targetNumber) {
+          message.textContent = `恭喜你，你猜對了！你這次猜了 ${guessCount} 次哦～`;
+          message.style.color = "green";
+          guessSubmit.disabled = true;
+          playAgainBtn.style.display = "block";
+        } else if (userGuess < targetNumber) {
+          message.textContent = "太小了，再試一次。";
+          message.style.color = "red";
+        } else {
+          message.textContent = "太大了，再試一次。";
+          message.style.color = "red";
+        }
+
+        //新增failure condition (接在guess函式後面)
+        if (guessCount >= maxAttempts && userGuess !== targetNumber) {
+          message.textContent = `You Failed! 答案是 ${targetNumber}`;
+          message.style.color = "red";
+          guessSubmit.disabled = true;
+          playAgainBtn.style.display = "block";
+        }
+
+        attemptsCount.textContent = guessCount;
+        guessField.value = "";
+        guessField.focus();
+      }
+
+      function revealAnswer() {
+        message.textContent = `本次遊戲答案為: ${targetNumber}`;
         message.style.color = "green";
-        guessSubmit.disabled = true;
-      } else if (userGuess < targetNumber) {
-        message.textContent = "太小了，再試一次。";
-        message.style.color = "red";
-      } else {
-        message.textContent = "太大了，再試一次。";
-        message.style.color = "red";
+        revealAnswerBtn.disabled = true;
+        playAgainBtn.style.display = "block";
       }
 
-      //新增failure condition (接在guess函式後面)
-      if (guessCount >= maxAttempts && userGuess !== targetNumber) {
-        message.textContent = `You Failed! 答案是 ${targetNumber}`;
-        message.style.color = "red";
-        guessSubmit.disabled = true;
+      function playAgain() {
+        // Clear messages
+        message.textContent = "";
+        
+        // Hide previous targetNumber if shown
+        if (revealAnswerBtn.disabled) {
+          revealAnswerBtn.disabled = false;
+        }
+
+        // Reset guessCount and attemptsCount
+        guessCount = 0;
+        attemptsCount.textContent = guessCount;
+
+        // Generate a new random number
+        targetNumber = generateRandomNumber();
+        console.log("answer: " + targetNumber);
+
+        // Enable guessSubmit button
+        guessSubmit.disabled = false;
+
+        // Hide playAgain button
+        playAgainBtn.style.display = "none";
+
+        // Focus on guessField
+        guessField.focus();
       }
 
-      attemptsCount.textContent = guessCount;
-      guessField.value = "";
-      guessField.focus();
-    }
-
-    function revealAnswer() {
-      message.textContent = `本次遊戲答案為: ${targetNumber}`;
-      message.style.color = "green";
-      revealAnswerBtn.disabled = true;
-    }
-  </script>
+      function generateRandomNumber() {
+        return Math.floor(Math.random() * 100) + 1;
+      }
+    </script>
+  </body>
 </html>
