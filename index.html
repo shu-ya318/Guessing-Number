@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+<title>猜數字遊戲</title>
+<meta charset="utf-8" />
+</head>
+
+<body>
+ <h1>猜數字遊戲</h1>
+ <p>1 到 100 之間的數字，你猜是多少？</p>
+ <input type="text" id="guessField" />
+ <input type="submit" value="猜!" id="guessSubmit" />
+ <button id="revealAnswer">揭曉答案</button>
+ <button id="playAgain">再玩一次</button>
+ <p>猜的次數: <span id="attemptsCount">0</span></p>
+ <p class="message"></p>
+ <p class="second"></p>
+
+ <script>
+ // Random number
+ let targetNumber = generateRandomNumber();
+ console.log("answer: " + targetNumber);
+
+ // Get element
+ const guessField = document.getElementById("guessField");
+ const guessSubmit = document.getElementById("guessSubmit");
+ const message = document.querySelector(".message");
+ const attemptsCount = document.getElementById("attemptsCount");
+ const revealAnswerBtn = document.getElementById("revealAnswer");
+ const playAgainBtn = document.getElementById("playAgain");
+ const secondCountdown = document.querySelector(".second");
+
+ // Variables
+ let guessCount = 0;
+ const maxAttempts = 5;
+
+ // Event listener
+ guessSubmit.addEventListener("click", checkGuess);
+ revealAnswerBtn.addEventListener("click", revealAnswer);
+ playAgainBtn.addEventListener("click", playAgain);
+
+ // Guess function
+ function checkGuess() {
+   const userGuess = parseInt(guessField.value);
+   console.log("userGuess: " + userGuess);
+
+   guessCount++;
+
+   if (userGuess === targetNumber) {
+     message.textContent = `恭喜你，你猜對了！你這次猜了 ${guessCount} 次哦～`;
+     message.style.color = "green";
+     guessSubmit.disabled = true;
+     playAgainBtn.style.display = "block";
+   } else if (userGuess < targetNumber) {
+     message.textContent = "太小了，再試一次。";
+     message.style.color = "red";
+   } else {
+     message.textContent = "太大了，再試一次。";
+     message.style.color = "red";
+   }
+
+   // 新增 failure condition
+   if (guessCount >= maxAttempts && userGuess !== targetNumber) {
+     message.textContent = `You Failed! 答案是 ${targetNumber}，倒數5秒後自動重啟新的一局`;
+     message.style.color = "red";
+     guessSubmit.disabled = true;
+     playAgainBtn.style.display = "block";
+
+  // Countdown display
+  delayedDisplay("5", 0, display);
+  delayedDisplay("4", 1000, display);
+  delayedDisplay("3", 2000, display);
+  delayedDisplay("2", 3000, display);
+  delayedDisplay("1", 4000, () => {
+  display("1");
+   setTimeout(() => {
+   display(""); // Hide the countdown
+   setTimeout(() => {
+    playAgain();
+    }, 1000);
+   }, 1000);
+   });
+  }
+
+   attemptsCount.textContent = guessCount;
+   guessField.value = "";
+   guessField.focus();
+}
+
+ function revealAnswer() {
+   message.textContent = `本次遊戲答案為: ${targetNumber}`;
+   message.style.color = "green";
+   revealAnswerBtn.disabled = true;
+   playAgainBtn.style.display = "block";
+}
+
+ function playAgain() {
+   // Clear messages
+   message.textContent = "";
+
+   // Hide previous targetNumber if shown
+   if (revealAnswerBtn.disabled) {
+     revealAnswerBtn.disabled = false;
+   }
+
+   // Reset guessCount and attemptsCount
+   guessCount = 0;
+   attemptsCount.textContent = guessCount;
+
+   // Generate a new random number
+   targetNumber = generateRandomNumber();
+   console.log("answer: " + targetNumber);
+
+   // Enable guessSubmit button
+   guessSubmit.disabled = false;
+
+   // Hide playAgain button
+   playAgainBtn.style.display = "none";
+
+   // Clear countdown display
+   display("");
+
+   // Focus on guessField
+   guessField.focus();
+}
+
+ function generateRandomNumber() {
+   return Math.floor(Math.random() * 100) + 1;
+}
+
+ function display(value) {
+   secondCountdown.textContent = value;
+}
+
+ function delayedDisplay(value, delay, callback) {
+   setTimeout(() => {
+     callback(value);
+   }, delay);
+}
+
+</script>
+</body>
+</html>
