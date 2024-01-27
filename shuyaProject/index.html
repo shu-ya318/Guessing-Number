@@ -3,34 +3,97 @@
 <head>
   <title>猜數字遊戲</title>
   <meta charset="utf-8" />
+  <style>
+    .container{
+              margin: 0px 300px ;
+    }
+    body{
+        background-image:url(https://images.unsplash.com/photo-1554755229-ca4470e07232?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+    }
+    .title{
+          background-image:url(https://images.unsplash.com/photo-1620856516969-6b6f1c1e780b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+          opacity: 0.7;
+          color:	whitesmoke ;
+          text-align: center;
+          text-decoration:none;
+          margin: 0px 0px 20px 0px ;
+          border: 3px solid  whitesmoke   ;
+          padding:30px 40px; 
+    }
+    .subtitle{
+              color:#AE0000	;
+              text-align: justify;
+              margin: 0px 0px 10px 0px ;
+    }
+    .rule{
+          color:	#AE0000	;
+          text-align: justify;
+          line-height:2;
+          font-weight: 500;
+          padding:0px 0px 5px 0px ; 
+    }
+    #guessField{
+                background-color: #FF2D2D;
+    }
+    .game-button{
+                background-color:	#FF2D2D ;
+                color: white;
+                font-weight: 500;
+                margin: 2px;
+                border: 2px solid white  ;
+                padding: 2px 4px;
+    }
+    .guess-time{                               /*不同標籤=除了各自id屬性 + 可套用共同的calss屬性*/
+               color:		#FF2D2D ;
+               font-weight: 550;
+               margin:0px ;
+    }
+  </style>
 </head>
 
 <body>
-    <h1>猜數字遊戲</h1>
-    <p>1 到 100 之間的數字，你猜是多少？</p>
-    <input type="text" id="guessField" />
-    <input type="submit" value="猜!" id="guessSubmit" />
-    <button id="revealAnswer">揭曉答案</button>
-    <button id="playAgain">再玩一次</button>
-    <p>猜的次數: <span id="attemptsCount">0</span></p>
-    <p class="message"></p>
-    <p class="second"></p>
+    <h1 class="title">猜數字遊戲</h1>
+    <div class="container">
+      <h3  class="subtitle">從1 到 100 之間猜一個數字!</h3>
+      <div class="rule">
+        <div>遊戲規則:</div>
+        <div>1.只能輸入1 到 100 之間的數字，輸錯會給予提示。</div>
+        <div>2.放棄猜測可直接點擊揭曉答案，並有再玩一次機會。</div>
+        <div>3.猜測大於5次則失敗並揭曉答案，5秒後重啟新局。</div>
+      </div>
+    <!--不寫form標籤，因(1)透過JS監聽按鈕點擊事件來操作+(2)避免默認的表單行為 ex按空白鍵提交-->
+    <!--使用者NO.1主要互動-->
+      <input type="text"  id="guessField"  maxlength="3"  onkeyup="this.value=this.value.replace(/\D/g,'')"  autofocus/>     <!--輸入單行數字-->
+      <input type="submit" value="猜!" id="guessSubmit"  class="game-button" />    <!--送出按鈕-->
+      <!--NO.1-1(1)回饋輔助顯示，提示太大或太小-->
+      <p class="message"></p>
+      <!--NO.1-1(2)回饋輔助顯示-->
+      <div  class="guess-time">目前已猜的次數: <span id="attemptsCount">0</span></div>
+      <!--NO.1-2回饋輔助顯示，失敗的倒數-->
+      <p class="second"></p>
+      <div>
+        <button id="revealAnswer" class="game-button" >揭曉答案</button>  <!--使用者NO.2主要互動-->
+        <button id="playAgain"    class="game-button">重啟新局</button>   <!--使用者NO.3主要互動-->
+      </div>   
+    </div>
+<!--JS的開始-->
   <script>
- // Random number
+// 產生隨機數字，常立即console.log來偵錯
     let targetNumber = generateRandomNumber();
     console.log("answer: " + targetNumber);
- // Get element
+// 規則:設猜測成功的次數限制
+    let guessCount = 0;
+    const maxAttempts = 5;
+/*使用者輸入猜測數字*/
+  //取得 HTML的元素節點  (排序=依HTML標籤的書寫順序)
     const guessField = document.getElementById("guessField");
     const guessSubmit = document.getElementById("guessSubmit");
     const message = document.querySelector(".message");
     const attemptsCount = document.getElementById("attemptsCount");
+    const secondCountdown = document.querySelector(".second");
     const revealAnswerBtn = document.getElementById("revealAnswer");
     const playAgainBtn = document.getElementById("playAgain");
-    const secondCountdown = document.querySelector(".second");
- // Variables
-    let guessCount = 0;
-    const maxAttempts = 5;
- // Event listener
+  //綁定事件監聽程式
     guessSubmit.addEventListener("click", checkGuess);
     revealAnswerBtn.addEventListener("click", revealAnswer);
     playAgainBtn.addEventListener("click", playAgain);
