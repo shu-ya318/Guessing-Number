@@ -8,48 +8,57 @@
       margin: 0 auto;
     }
     .container{
-      margin: 0px 50px 0px  380px ;
+      margin: 0px 50px 0px  200px;
     }
     body{
       background-image:url(https://images.unsplash.com/photo-1554755229-ca4470e07232?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
     }
     .title{
+      margin: 0px 0px 20px 0px;
+      padding:30px 40px; 
+      border: 3px solid  whitesmoke;
       background-image:url(https://images.unsplash.com/photo-1620856516969-6b6f1c1e780b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
-      opacity: 0.7;
-      color:	whitesmoke ;
+      color:	whitesmoke;
       text-align: center;
       text-decoration:none;
-      margin: 0px 0px 20px 0px ;
-      border: 3px solid  whitesmoke   ;
-      padding:30px 40px; 
+      opacity: 0.7;
     }
     .subtitle{
-      color:black	;
+      margin: 5px 0px;
+      color:black;
+      font-weight: 550;
+      font-size: small;
       text-align: justify;
-      margin: 0px 0px 10px 0px ;
     }
     .rule{
-      color:	black	;
+      width: 75%;
+      margin: 20px 0px;
+      padding:10px 0px 10px 10px; 
+      border: 3px solid white;
+      background-color: whitesmoke;
+      color:	black;
+      font-size: x-small;
       text-align: justify;
-      line-height:2;
-      font-weight: 500;
-      padding:0px 0px 5px 0px ; 
+      line-height:1.5;
+      opacity: 0.8;
     }
     #guessField{
+      margin-bottom: 10px;
       background-color: #FF2D2D;
     }
     .game-button{
-      background-color:	#FF2D2D ;
+      margin: 2px;
+      padding: 2px 4px;
+      border: 2px solid white;
+      background-color:	#FF2D2D;
       color: white;
       font-weight: 500;
-      margin: 2px;
-      border: 2px solid white  ;
-      padding: 2px 4px;
     }
     .guess-time{          /*不同標籤=除了各自id屬性 + 可套用共同的calss屬性*/
-      color:		black;
-      font-weight: 550;
       margin:0px ;
+      color: black;
+      font-weight: 550;
+      font-size: small;
     }
   </style>
 </head>
@@ -57,144 +66,150 @@
   <div class="wrapper">
     <h1 class="title">猜數字遊戲</h1>
     <div class="container">
-      <h3  class="subtitle">從1 到 100 之間猜一個數字!</h3>
       <div class="rule">
         <div>遊戲規則:</div>
-        <div>1.只能輸入1 到 100 之間的數字，輸錯會給予提示。</div>
-        <div>2.放棄猜測可直接點擊揭曉答案，並有再玩一次機會。</div>
-        <div>3.猜測大於5次則失敗並揭曉答案，5秒後自動重啟新局。</div>
+        <div>1.請從1 到 100 之間猜一個數字，每次猜錯均會給予提示以限縮猜測範圍。</div>
+        <div>2.途中欲放棄猜測可選擇直接點擊揭曉答案，或選擇重啟新局重新猜測。</div>
+        <div>3.共有5次猜測機會，超過視為遊戲失敗，將揭曉答案並自動倒數5秒後重啟新局。</div>
+      </div>
+      <div  class="subtitle"> 
+        從<span id="lowerBound">1</span>到<span id="upperBound">100</span>間,猜1個數字!
+        <span class="inputError"></span> 
       </div>
     <!--不寫form標籤，因(1)設id後，藉JS監聽按鈕點擊事件來操作+(2)避免默認的表單行為 ex按空白鍵提交-->
-    <!--使用者NO.1主要互動-->
-      <input type="text"  id="guessField"  maxlength="3"  onkeyup="this.value=this.value.replace(/\D/g,'')"  required  autofocus  />     <!--輸入單行數字-->
-      <input type="submit" value="猜!" id="guessSubmit"  class="game-button" />    <!--送出按鈕-->
+      <!--使用者主要互動1.表單輸入 + 驗證--> 
+      <input type="text"  id="guessField" size="14" maxlength="3"  onkeyup="this.value=this.value.replace(/\D/g,'')"  required  autofocus  />     <!--輸入單行數字-->
+      <!--確認按鈕-->
+      <input type="submit" value="猜!" id="guessSubmit"  class="game-button" />  
+      <!--使用者主要互動2.揭曉答案 3.重啟新局-->
+      <button id="revealAnswer" class="game-button" >揭曉答案</button> 
+      <button id="restartGame"  class="game-button">重啟新局</button>  
       <!--NO.1-1(1)回饋輔助顯示-->
-      <div  class="guess-time">目前已猜的次數: <span id="attemptsCount">0</span></div>
-      <!--NO.1-1(2)回饋輔助顯示，提示太大或太小-->
-      <p class="message"></p>
-      <!--NO.1-2回饋輔助顯示，失敗的倒數-->
-      <p class="second"></p>
-      <div>
-        <button id="revealAnswer" class="game-button" >揭曉答案</button>  <!--使用者NO.2主要互動-->
-        <button id="restartGame"  class="game-button">重啟新局</button>   <!--使用者NO.3主要互動-->
-      </div>   
-    </div>
+      <div >
+        <span class="guess-time">目前已猜測次數: <span id="attemptsCount">0</span></span>
+      </div>
+      <!--NO.1-1(2)回饋輔助顯示:提示太大或小+失敗倒數計時-->
+      <p>
+        <span class="message"></span>
+        <span class="second"></span>
+      </p>
 <!--JS的開始-->
     <script>
-  // 產生隨機數字，常立即console.log來偵錯
-      let targetNumber = generateRandomNumber();
-      console.log("answer: " + targetNumber);
-  // 規則:設猜測成功的次數限制
+  // 產生隨機亂數
+      let targetNumber = Math.floor(Math.random() * 100) + 1;
+  // 設次數規則
       let   guessCount = 0;
       const maxAttempts = 5;
-  /*使用者輸入猜測數字*/
+  /*當使用者輸入猜測數字*/
     //取得 HTML的元素節點  (排序=依HTML標籤的書寫順序)
+      let lowerBound = document.getElementById("lowerBound");
+      let upperBound = document.getElementById("upperBound");
       const guessField = document.getElementById("guessField");
+      const error = document.querySelector(".inputError"); 
       const guessSubmit = document.getElementById("guessSubmit");
       const attemptsCount = document.getElementById("attemptsCount");
       const message = document.querySelector(".message");
       const secondCountdown = document.querySelector(".second");
       const revealAnswerBtn = document.getElementById("revealAnswer");
       const restartGameBtn = document.getElementById("restartGame");
-    //綁定事件監聽程式 : 按鈕們&滑鼠事件
+    //綁定事件監聽程式 : 按鈕們&點擊事件
       guessSubmit.addEventListener("click", checkGuess);
       revealAnswerBtn.addEventListener("click", revealAnswer);
       restartGameBtn.addEventListener("click", restartGame);
 
-  // 點擊猜!按鈕的函式
+    //點擊猜!按鈕的函式
       function checkGuess() {
-        //先轉換確保輸入是數字 +偵錯
+        //將表單輸入字串轉換成數字 
         const userGuess = parseInt(guessField.value);   
-        console.log("userGuess: " + userGuess);
-
-        //猜測數字遞增
+        //判斷一、輸入特定區間數字?
+        if(userGuess < parseInt(lowerBound.textContent) || userGuess > parseInt(upperBound.textContent) || isNaN(userGuess)){
+          error.textContent = `請重新輸入${lowerBound.textContent}到${upperBound.textContent}間的數字!`;
+          error.style.color = "white";
+          return ;
+        }
+        //正確輸入後，清除輸入錯誤訊息
+        error.textContent =" ";
+        //猜測數字遞增+顯示
         guessCount++;
+        attemptsCount.textContent = guessCount;
 
-        //不同條件的顯示回饋 : 猜測成功的 +  五次以內猜測的提示
+        //判斷二、輸入是否為正解數字?
         if (userGuess === targetNumber) {
-          message.textContent = `恭喜你猜對了！你總共猜了 ${guessCount} 次哦～`; //修改 元素節點的文字內容
+          message.textContent = `恭喜你猜對了！你總共猜了 ${guessCount} 次哦～`; 
           message.style.color = "white";
-          guessSubmit.disabled = true;           //禁用 猜!按鈕的點擊
-          restartGame.style.display = "block";  // 顯示 重啟新局按鈕
-      } else if (userGuess < targetNumber) {
+          guessSubmit.disabled = true;    
+          guessSubmit.style.backgroundColor = "black";      
+          restartGameBtn.style.display = "block";  
+        }else if (userGuess < targetNumber) {
           message.textContent = "太小了，再猜大一點!";
           message.style.color = "black";
-
+          lowerBound.textContent = userGuess;
+          if(guessCount > maxAttempts) {
+            message.textContent = `遊戲失敗! 本局正解為 ${targetNumber}，將自動重啟新局!`;
+            message.style.color = "black";
+            guessSubmit.disabled = true;
+            guessSubmit.style.backgroundColor = "black"; 
+            countDownAndReset(  );
+          }
       } else {
           message.textContent = "太大了，再猜小一點!";
           message.style.color = "black";
+          upperBound.textContent = userGuess;
+          if(guessCount > maxAttempts) {
+            message.textContent = `遊戲失敗! 本局正解為 ${targetNumber}，將自動重啟新局!`;
+            message.style.color = "black";
+            guessSubmit.disabled = true;
+            guessSubmit.style.backgroundColor = "black"; 
+            countDownAndReset(  );
+          }
+      }
+        guessField.value = " ";
+        guessField.focus();
+  } 
+      //顯示(秒數)函式
+      function display(result) {                                                
+        secondCountdown.textContent = result;       
+      }
+      //倒數計時器(含顯示秒數)函式 
+      function delayedDisplay(string, seconds, callback) {     
+        setTimeout(  () => {   
+        callback(string);   
+        }  , seconds);           
+      }
+      //倒數計時(含顯示秒數) 並重啟新局函式: 
+      function countDownAndReset() {                       
+        delayedDisplay("倒數5秒", 0, display);          
+        delayedDisplay("倒數4秒", 1000, display);
+        delayedDisplay("倒數3秒", 2000, display);
+        delayedDisplay("倒數2秒", 3000, display);
+        delayedDisplay("倒數1秒", 4000, display) ;  
+        delayedDisplay(" ", 5000,restartGame) ;  
       }
 
-      //失敗條件的 顯示回饋 + 後續倒數計時重啟新局
-        if (guessCount >= maxAttempts && userGuess !== targetNumber) {
-          message.textContent = `遊戲失敗! 答案是 ${targetNumber}，5秒後自動重啟新局`;
-          message.style.color = "black";
-          guessSubmit.disabled = true;
-          restartGameBtn.style.display = "block";
-
-          delayedDisplay("5", 0, display);
-          delayedDisplay("4", 1000, display);
-          delayedDisplay("3", 2000, display);
-          delayedDisplay("2", 3000, display);
-          delayedDisplay("1", 4000, () => {
-            display("1");
-            setTimeout(() => {
-            display(""); // 隱藏倒數計時的顯示
-            setTimeout(() => {
-              restartGame();
-              }, 1000);
-            }, 1000);
-          });
-      } 
-        attemptsCount.textContent = guessCount;
-        guessField.value = "";
-        guessField.focus();
-  } //function checkGuess的結束
 
       function revealAnswer() {
-      message.textContent = `本局答案為: ${targetNumber}`;
-      message.style.color = "white";
-      revealAnswerBtn.disabled = true;
-      restartGame.style.display = "block";
+        message.textContent = `本局正解為: ${targetNumber}`;
+        message.style.color = "white";
+        revealAnswerBtn.disabled = true;
+        restartGame.style.display = "block";
     }
 
       function restartGame() {
-    //清除原本所有內容
-        message.textContent = "";
-    //隱藏之前的答案
-        if (revealAnswerBtn.disabled) {
-          revealAnswerBtn.disabled = false;
-    }
-    // 重置猜測次數
+        //清除猜錯所改變內容
+        message.textContent = " ";
+        secondCountdown.textContent = " ";
+        guessField.value = "";
+        guessSubmit.disabled = false;
+        guessSubmit.style.backgroundColor = "red"; 
+        revealAnswerBtn.disabled = false;
+        //恢復初始設定 
+        lowerBound.textContent = 1;
+        upperBound.textContent = 100;
         guessCount = 0;
         attemptsCount.textContent = guessCount;
-
-    // 產生新的隨機數字答案
-        targetNumber = generateRandomNumber();
-        console.log("answer: " + targetNumber);
-
-    // 可點擊猜!按鈕
-        guessSubmit.disabled = false;
-    // 隱藏重啟新局按鈕
-        restartGame.style.display = "none";
-
-    // 清除倒數計時
-        display("");
-
+        targetNumber = Math.floor(Math.random() * 100) + 1;
         guessField.focus();
-  }
-
-      function generateRandomNumber() {
-        return Math.floor(Math.random() * 100) + 1;
-  }
-      function display(value) {
-        secondCountdown.textContent = value;
-  }
-      function delayedDisplay(value, delay, callback) {
-        setTimeout(() => {
-        callback(value);
-        }, delay);
-  }
+      }
     </script>
   </div>
 </body>
